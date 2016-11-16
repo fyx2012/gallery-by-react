@@ -21,9 +21,25 @@ imageDatas = (function genImageURL(imageDatasArr) {
 
     return imageDatasArr;
 })(imageDatas);
-
+var ImgFigure = React.createClass({
+	render: function(){
+		return (
+			<figure> 
+				<img />
+				<figcaption>
+					<h2></h2>
+				</figcaption>
+			</figure>
+			);
+	}
+});
 var GalleryByReactApp = React.createClass({
   render: function() {
+  	var controllerUnits = [],
+		ImgFigures = [];
+	imageDatas.forEach(function(value){
+		<ImgFigure data={value}/>
+	});
   return (<section className="stage" ref="stage"><section className="img-sec"></section><nav className="controller-nav"></nav></section>);
   }
 });
