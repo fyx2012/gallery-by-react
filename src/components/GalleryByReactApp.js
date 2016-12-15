@@ -6,6 +6,7 @@ var React = require('react/addons');
 // CSS
 require('normalize.css');
 require('../styles/main.css');
+// require('../styles/main.css');
 // 获取图片相关的数据
 var imageDatas = require('../data/imageDatas.json');
 
@@ -45,16 +46,11 @@ var ImgFigure = React.createClass({
 		if(this.props.arrange.pos){
 			styleObj = this.props.arrange.pos;
 		}
-		// if (this.props.arrange.rotate) {
-  //         (['MozTransform', 'msTransform', 'WebkitTransform', 'transform']).forEach(function (value) {
-  //           styleObj[value] = 'rotate(' + this.props.arrange.rotate + 'deg)';
-  //         }.bind(this));
-  //       }
-        if(this.props.arrange.rotate){
-			(['-moz-', '-ms-', '-webkit-', '']).forEach(function(value){
-				styleObj[value + 'transform'] = 'rotate(' + this.props.arrange.rotate + 'deg)';
-			}.bind(this));
-		}
+		if (this.props.arrange.rotate) {
+          (['MozTransform', 'msTransform', 'WebkitTransform', 'transform']).forEach(function (value) {
+            styleObj[value] = 'rotate(' + this.props.arrange.rotate + 'deg)';
+          }.bind(this));
+        }
 		if(this.props.arrange.isCenter){
 			styleObj.zIndex = 11;
 		}
@@ -74,6 +70,29 @@ var ImgFigure = React.createClass({
 							</div>
 						</figcaption>
 				</figure>
+			);
+	}
+});
+var ControllerUnit = React.createClass({
+	handleClick: function(e){
+			if(this.props.arrange.isCenter){
+				this.props.inverse();
+			}else{
+				this.props.center();
+			}
+			e.preventDefault();
+			e.stopPropagation();
+		},
+	render: function(){
+		var controlelrUnitClassName = "controller-unit";
+		if(this.props.arrange.isCenter){
+			controlelrUnitClassName += " is-center";
+			if(this.props.arrange.isInverse){
+				controlelrUnitClassName += " is-inverse";
+			}
+		}
+		return (
+			<span className={controlelrUnitClassName} onClick={this.handleClick}></span>
 			);
 	}
 });
@@ -120,7 +139,7 @@ var GalleryByReactApp = React.createClass({
 		vPosRangeX = vPosRange.x,
 
 		imgsArrangeTopArr = [],
-		topImgNum = (Math.random() * 2), //取0或者1个
+		topImgNum = Math.floor(Math.random() * 2), //取0或者1个
 		topImgSpliceIndex = 0,
 		imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex, 1);
 		//首先居中centerIndex的图片，居中的centerIndex的图片不需要旋转
@@ -228,7 +247,7 @@ var GalleryByReactApp = React.createClass({
 
   },
   render: function() {
-	var controllerUnits	=	[],
+	var controllerUnits	= [],
 		ImgFigures = [];
 	imageDatas.forEach(function (value, index) {
 
@@ -243,7 +262,8 @@ var GalleryByReactApp = React.createClass({
                 isCenter: false
             };
         }
-		ImgFigures.push(<ImgFigure data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
+		ImgFigures.push(<ImgFigure key={index} data={value} ref={'imgFigure' + index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
+		controllerUnits.push(<ControllerUnit key={index} arrange={this.state.imgsArrangeArr[index]} inverse={this.inverse(index)} center={this.center(index)}/>);
 	}.bind(this));
   return (<section className="stage" ref="stage"><section className="img-sec">{ImgFigures}</section><nav className="controller-nav">{controllerUnits}</nav></section>);
   }
